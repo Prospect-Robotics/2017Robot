@@ -1,166 +1,93 @@
 package org.usfirst.frc.team2813.robot.commands;
 
-import org.usfirst.frc.team2813.robot.Robot;
-
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Autonomous extends Command {
+public class Autonomous3 extends CommandGroup {
 	SendableChooser<Integer> positionChooser, airshipChooser;
 
-	public Autonomous() {
-		// Use requires() here to declare subsystem dependencies
-		requires(Robot.driveTrain);
+	public Autonomous3() {
+		positionChooser = new SendableChooser<Integer>();
+		for (int i = 1; i <= 3; i++) {
+			positionChooser.addObject("Position " + i, i);
+		}
+		SmartDashboard.putData("What position is the Robot starting in?", positionChooser);
+		airshipChooser = new SendableChooser<Integer>();
+		for (int i = 1; i <= 3; i++) {
+			airshipChooser.addObject("Gear Peg " + i, i);
+		}
+		SmartDashboard.putData("Which peg on the Airship?", airshipChooser);
 	}
 
-	// Called just before this Command runs the first time
 	protected void initialize() {
-		ADXRS450_Gyro gyro = Robot.gyro;
-		Encoder encoder = Robot.driveTrain.encoder;
-		encoder.setDistancePerPulse(240 / (6 * Math.PI));
 		int position = positionChooser.getSelected() + airshipChooser.getSelected() * 3;
+		addSequential(new Drive(0, 0, 0));
 		switch (position) {
 		case 2:
-			// Drive forward
-			while (encoder.getDistance() < 27.16) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(0, -1, 0, gyro.getAngle());
-			}
-			// Drive right
-			encoder.setDistancePerPulse(6 * Math.PI);
-			while (encoder.getDistance() < 0.99) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(1, 0, 0, gyro.getAngle());
-			}
-			// Turn clockwise
-			while (gyro.getAngle() < 30) {
-				Robot.driveTrain.drive.mecanumDrive_Polar(0, 0, 1);
-			}
+			addSequential(new Drive(0, -1, 27.16));
+			addSequential(new Drive(1, 0, 28.15));
+			addSequential(new Rotate(1, 30));
 			break;
 
 		case 3:
-			// Drive forward
-			while (encoder.getDistance() < 27.16) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(0, -1, 0, gyro.getAngle());
-			}
-			// Drive left
-			encoder.setDistancePerPulse(6 * Math.PI);
-			while (encoder.getDistance() > -32.48) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(-1, 0, 0, gyro.getAngle());
-			}
-			// Turn clockwise
-			while (gyro.getAngle() < 30) {
-				Robot.driveTrain.drive.mecanumDrive_Polar(0, 0, 1);
-			}
+			addSequential(new Drive(0, -1, 27.16));
+			addSequential(new Drive(-1, 0, 5.32));
+			addSequential(new Rotate(1, 30));
 			break;
 
 		case 4:
-			// Drive forward
-			while (encoder.getDistance() < 27.16) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(0, -1, 0, gyro.getAngle());
-			}
-			// Drive left
-			encoder.setDistancePerPulse(6 * Math.PI);
-			while (encoder.getDistance() > -93.62)
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(-1, 0, 0, gyro.getAngle());
-			// Turn clockwise
-			while (gyro.getAngle() < 30) {
-				Robot.driveTrain.drive.mecanumDrive_Polar(0, 0, 1);
-			}
+			addSequential(new Drive(0, -1, 27.16));
+			addSequential(new Drive(-1, 0, 66.46));
+			addSequential(new Rotate(1, 30));
 			break;
 
 		case 5:
-			// Drive forward
-			while (encoder.getDistance() < 27.16) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(0, -1, 0, gyro.getAngle());
-			}
-			// Drive right
-			encoder.setDistancePerPulse(6 * Math.PI);
-			while (encoder.getDistance() < 33.46) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(1, 0, 0, gyro.getAngle());
-			}
+			addSequential(new Drive(0, -1, 27.16));
+			addSequential(new Drive(1, 0, 60.62));
 			break;
 
 		case 6:
 			break;
 
 		case 7:
-			// Drive forward
-			while (encoder.getDistance() < 27.16) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(0, -1, 0, gyro.getAngle());
-			}
-			// Drive left
-			encoder.setDistancePerPulse(6 * Math.PI);
-			while (encoder.getDistance() > -61.14) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(-1, 0, 0, gyro.getAngle());
-			}
+			addSequential(new Drive(0, -1, 27.16));
+			addSequential(new Drive(-1, 0, 33.98));
 			break;
 
 		case 8:
-			// Drive forward
-			while (encoder.getDistance() < 27.16) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(0, -1, 0, gyro.getAngle());
-			}
-			// Drive right
-			encoder.setDistancePerPulse(6 * Math.PI);
-			while (encoder.getDistance() < 93.62) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(1, 0, 0, gyro.getAngle());
-			}
-			// Turn counterclockwise
-			while (gyro.getAngle() > -30) {
-				Robot.driveTrain.drive.mecanumDrive_Polar(0, 0, -1);
-			}
+			addSequential(new Drive(0, -1, 27.16));
+			addSequential(new Drive(1, 0, 120.78));
+			addSequential(new Rotate(-1, 30));
 			break;
 
 		case 9:
-			// Drive forward
-			while (encoder.getDistance() < 27.16) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(0, -1, 0, gyro.getAngle());
-			}
-			// Drive right
-			encoder.setDistancePerPulse(6 * Math.PI);
-			while (encoder.getDistance() < 61.14) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(1, 0, 0, gyro.getAngle());
-			}
-			// Turn counterclockwise
-			while (gyro.getAngle() > -30) {
-				Robot.driveTrain.drive.mecanumDrive_Polar(0, 0, -1);
-			}
+			addSequential(new Drive(0, -1, 27.16));
+			addSequential(new Drive(1, 0, 88.3));
+			addSequential(new Rotate(-1, 30));
 			break;
 
 		case 10:
-			// Drive forward
-			while (encoder.getDistance() < 27.16) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(0, -1, 0, gyro.getAngle());
-			}
-			// Drive left
-			encoder.setDistancePerPulse(6 * Math.PI);
-			while (encoder.getDistance() > -28.67) {
-				Robot.driveTrain.drive.mecanumDrive_Cartesian(-1, 0, 0, gyro.getAngle());
-			}
-			// Turn counterclockwise
-			while (gyro.getAngle() > -30) {
-				Robot.driveTrain.drive.mecanumDrive_Polar(0, 0, -1);
-			}
+			addSequential(new Drive(0, -1, 27.16));
+			addSequential(new Drive(1, 0, 1.51));
+			addSequential(new Rotate(-1, 30));
 			break;
 		}
-	}
+		// Add Commands here:
+		// e.g. addSequential(new Command1());
+		// addSequential(new Command2());
+		// these will run in order.
 
-	// Called repeatedly when this Command is scheduled to run
-	protected void execute() {
-	}
+		// To run multiple commands at the same time,
+		// use addParallel()
+		// e.g. addParallel(new Command1());
+		// addSequential(new Command2());
+		// Command1 and Command2 will run in parallel.
 
-	// Make this return true when this Command no longer needs to run execute()
-	protected boolean isFinished() {
-		return false;
-	}
-
-	// Called once after isFinished returns true
-	protected void end() {
-	}
-
-	// Called when another command which requires one or more of the same
-	// subsystems is scheduled to run
-	protected void interrupted() {
+		// A command group will require all of the subsystems that each member
+		// would require.
+		// e.g. if Command1 requires chassis, and Command2 requires arm,
+		// a CommandGroup containing them would require both the chassis and the
+		// arm.
 	}
 }
