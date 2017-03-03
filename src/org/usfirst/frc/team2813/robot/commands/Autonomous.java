@@ -4,10 +4,10 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Autonomous3 extends CommandGroup {
-	SendableChooser<Integer> positionChooser, airshipChooser;
+public class Autonomous extends CommandGroup {
+	public final SendableChooser<Integer> positionChooser, airshipChooser;
 
-	public Autonomous3() {
+	public Autonomous() {
 		positionChooser = new SendableChooser<Integer>();
 		for (int i = 1; i <= 3; i++) {
 			positionChooser.addObject("Position " + i, i);
@@ -29,7 +29,7 @@ public class Autonomous3 extends CommandGroup {
 			addSequential(new Drive(1, 0, 28.15));
 			addSequential(new Rotate(1, 30));
 			break;
-
+			
 		case 3:
 			addSequential(new Drive(0, -1, 27.16));
 			addSequential(new Drive(-1, 0, 5.32));

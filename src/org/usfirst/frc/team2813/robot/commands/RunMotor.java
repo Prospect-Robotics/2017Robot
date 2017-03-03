@@ -14,19 +14,19 @@ public class RunMotor extends Command {
 		this.speed = speed;
 	}
 
-	// Called repeatedly when this Command is scheduled to run
+	public RunMotor(MotorSubsystem motor, double speed, double timeout) {
+		this(motor, speed);
+		setTimeout(timeout);
+	}
+
 	protected void execute() {
-		motor.set(speed); // keep the watchdog fed
-		// ((PWMSpeedController) motor.motor).Feed(); // this would also feed the watchdog
+		motor.set(speed);
 	}
 
-	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		return false; // run until we're stopped
+		return isTimedOut();
 	}
 
-	// Called when another command which requires one or more of the same
-	// subsystems is scheduled to run
 	protected void end() {
 		motor.set(0.0);
 	}

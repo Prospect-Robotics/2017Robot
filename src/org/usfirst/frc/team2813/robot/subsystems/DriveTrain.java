@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends Subsystem {
 	// Put methods for controlling this subsystem
@@ -15,9 +16,10 @@ public class DriveTrain extends Subsystem {
 
 	public final RobotDrive drive;
 	public final Encoder encoder;
-	private final PIDController ctrl;
+	private PIDController ctrl;
+	private double pid_P, pid_I, pid_D;
 
-	public enum Mode {
+	private enum Mode {
 		CARTESIAN, POLAR;
 	}
 
@@ -25,6 +27,9 @@ public class DriveTrain extends Subsystem {
 	private double x = 0, y = 0;
 
 	public void initDefaultCommand() {
+		SmartDashboard.putNumber("p", 0.0);
+		SmartDashboard.putNumber("i", 0.0);
+		SmartDashboard.putNumber("d", 0.0);
 		// Set the default command for a subsystem here.
 		// setDefaultCommand(new MySpecialCommand());
 		setDefaultCommand(new OperatorDrive());
@@ -39,6 +44,12 @@ public class DriveTrain extends Subsystem {
 	}
 
 	public synchronized void drive(double rotation) {
+		if (pid_P != SmartDashboard.getNumber("p", 0.0) || pid_I != SmartDashboard.getNumber("i", 0.0) || pid_D != SmartDashboard.getNumber("d", 0.0)) {
+			pid_P = SmartDashboard.getNumber("p", 0.0);
+			pid_I = SmartDashboard.getNumber("i", 0.0);
+			pid_D = SmartDashboard.getNumber("d", 0.0);
+			ctrl.setPID(pid_P, pid_I, pid_D);
+		}
 		switch (mode) {
 		case CARTESIAN:
 			drive.mecanumDrive_Cartesian(x, y, rotation, Robot.gyro.getAngle());
@@ -58,6 +69,6 @@ public class DriveTrain extends Subsystem {
 		ctrl.setSetpoint(rotation);
 		mode = Mode.POLAR;
 		this.x = mag;
-		this.y = rotation;
+		this.y = angle;
 	}
 }

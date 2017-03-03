@@ -16,7 +16,6 @@ public class SetServo extends InstantCommand {
 		this.angle = angle;
 	}
 
-	// Called once when the command executes
 	protected void initialize() {
 		servo.setAngle(angle);
 	}

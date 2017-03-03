@@ -1,9 +1,10 @@
 package org.usfirst.frc.team2813.robot;
 
-import org.usfirst.frc.team2813.robot.commands.Autonomous3;
+import org.usfirst.frc.team2813.robot.commands.Autonomous;
 import org.usfirst.frc.team2813.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team2813.robot.subsystems.MotorSubsystem;
 
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -25,14 +26,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-	public static MotorSubsystem intake;
-	public static MotorSubsystem belt;
-	public static MotorSubsystem lift;
-	public static MotorSubsystem climber;
-	public static OI oi; // Operator Interface
-	public static Servo gearHolderServo, bucketFlapServo;
+	public static MotorSubsystem intake, belt, bucket, climber;
 	public static ADXRS450_Gyro gyro;
 	public static DriveTrain driveTrain;
+	public static OI oi; // Operator Interface
+	public static Servo servoL, servoR;
+	public static UsbCamera camera;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<Command>();
@@ -47,24 +46,27 @@ public class Robot extends IterativeRobot {
 		chooser.addDefault("Sit there and do nothing", null);
 		chooser.addObject("Also, do nothing", null);
 		SmartDashboard.putData("Auto mode", chooser);
-		// Create a motor subsystem that is a VictorSP on PWM port 4 of the
-		// RoboRIO controlling the Intake
-		CameraServer.getInstance().startAutomaticCapture();
+		camera = CameraServer.getInstance().startAutomaticCapture();
 		intake = new MotorSubsystem(VictorSP.class, RobotMap.intakePort, "Intake");
 		belt = new MotorSubsystem(VictorSP.class, RobotMap.beltPort, "Belt");
 		climber = new MotorSubsystem(VictorSP.class, RobotMap.climberPort, "Climber");
 		// Sparks have built-in support for limit switches, so the robot program
 		// doesn't have to be aware of their existence
-		lift = new MotorSubsystem(Spark.class, RobotMap.liftPort, "Lift");
-		gearHolderServo = new Servo(RobotMap.servoPort1);
-		bucketFlapServo = new Servo(RobotMap.servoPort2);
+		bucket = new MotorSubsystem(Spark.class, RobotMap.bucketPort, "Bucket");
+		servoL = new Servo(RobotMap.servoLPort);
+		servoR = new Servo(RobotMap.servoRPort);
 		gyro = new ADXRS450_Gyro(); // Initialize before driveTrain
-		driveTrain  = new DriveTrain();
-		// It is very important that OI is initialized LAST.
-		// If it is not initialized after all subsystems it
-		// may try to instantiate a command that references
-		// a subsystem that hasn't been initialized yet,
-		// which will crash the robot program.
+		driveTrain = new DriveTrain();
+
+		// CameraServer.getInstance().addServer(new MjpegServer("RoboRIO MJPEG",
+		// 50007));
+
+		/**
+		 * It is very important that OI is initialized LAST. If it is not
+		 * initialized after all subsystems it may try to instantiate a command
+		 * that references a subsystem that hasn't been initialized yet, which
+		 * will crash the robot program.
+		 */
 		oi = new OI();
 	}
 
@@ -96,7 +98,8 @@ public class Robot extends IterativeRobot {
 		// button
 		autonomousCommand = chooser.getSelected();
 
-		new Autonomous3();
+		new Autonomous();
+
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
 		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -118,10 +121,11 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
+		/**
+		 * This makes sure that the autonomous stops running when teleop starts
+		 * running. If you want the autonomous to continue until interrupted by
+		 * another command, remove this line or comment it out.
+		 */
 		if (autonomousCommand != null) {
 			autonomousCommand.cancel();
 		}

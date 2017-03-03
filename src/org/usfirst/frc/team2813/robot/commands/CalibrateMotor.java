@@ -21,9 +21,9 @@ import edu.wpi.first.wpilibj.command.Command;
  * 3. Release the button. The light should blink green/white (Spark) or
  */
 public class CalibrateMotor extends Command {
-	SpeedController motor;
-	double currentPower;
-	int counter;
+	private SpeedController motor;
+	private double currentPower;
+	private int counter;
 
 	public CalibrateMotor(MotorSubsystem motor) {
 		requires(motor);
@@ -31,7 +31,6 @@ public class CalibrateMotor extends Command {
 		setInterruptible(false);
 	}
 
-	// Called just before this Command runs the first time
 	protected void initialize() {
 		currentPower = -1.0;
 		DriverStation.reportWarning("Calibration Starting!!!", false);
@@ -39,11 +38,9 @@ public class CalibrateMotor extends Command {
 		counter = 0;
 	}
 
-	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
 		motor.set(currentPower);
 		double progress = currentPower / 2 + 0.5;
-		// Robot.servo1.set(progress);
 		if (counter >= 25) {
 			DriverStation.reportWarning("Calibration progress: " + progress * 100 + "%", false);
 			counter = 0;
@@ -53,12 +50,10 @@ public class CalibrateMotor extends Command {
 
 	}
 
-	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
 		return currentPower >= 1.0;
 	}
 
-	// Called once after isFinished returns true
 	protected void end() {
 		motor.set(0);
 		System.out.println("done.");
