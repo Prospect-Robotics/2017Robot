@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ResetGyro extends Command {
 	public ResetGyro() {
 		// Use requires() here to declare subsystem dependencies
-		requires(Robot.driveTrain);
+		requires(Robot.getInstance().driveTrain);
 	}
 
 	// Called just before this Command runs the first time
@@ -16,7 +16,7 @@ public class ResetGyro extends Command {
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		Robot.gyro.reset();
+		Robot.getInstance().gyro.reset();
 	}
 
 	// Make this return true when this Command no longer needs to run execute()

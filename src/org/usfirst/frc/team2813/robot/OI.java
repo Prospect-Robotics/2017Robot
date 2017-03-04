@@ -35,23 +35,24 @@ public class OI {
 	private final JoystickButton button13 = new JoystickButton(buttons, 12);
 
 	public OI() {
-		button1.toggleWhenPressed(new RunMotor(Robot.intake, -1.0));
-		button2.toggleWhenPressed(new RunMotor(Robot.intake, 1.0));
-		button3.toggleWhenPressed(new RunMotor(Robot.belt, 0.6));
-		button4.toggleWhenPressed(new RunMotor(Robot.belt, -0.6));
-		button5.whenPressed(new RunMotor(Robot.intake, -1.0));
-		button5.whenPressed(new RunMotor(Robot.belt, 0.6));
-		button6.whenPressed(new RunMotor(Robot.intake, 1.0));
-		button6.whenPressed(new RunMotor(Robot.belt, -0.6));
-		button7.toggleWhenPressed(new RunMotor(Robot.bucket, 0.25, 10));
-		button8.toggleWhenPressed(new RunMotor(Robot.bucket, -0.25, 10));
-		button11.whenPressed(new RunMotor(Robot.intake, 0.0));
-		button11.whenPressed(new RunMotor(Robot.belt, 0.0));
-		button9.whenPressed(new SetServo(Robot.servoL, 0));
-		button9.whenPressed(new SetServo(Robot.servoR, 0));
-		button10.whenPressed(new SetServo(Robot.servoL, 100));
-		button10.whenPressed(new SetServo(Robot.servoR, -100));
+		final Robot robot = Robot.getInstance();
+		button1.toggleWhenPressed(new RunMotor(robot.intake, -1.0));
+		button2.toggleWhenPressed(new RunMotor(robot.intake, 1.0));
+		button3.toggleWhenPressed(new RunMotor(robot.belt, 0.6));
+		button4.toggleWhenPressed(new RunMotor(robot.belt, -0.6));
+		button5.whenPressed(new RunMotor(robot.intake, -1.0));
+		button5.whenPressed(new RunMotor(robot.belt, 0.6));
+		button6.whenPressed(new RunMotor(robot.intake, 1.0));
+		button6.whenPressed(new RunMotor(robot.belt, -0.6));
+		button7.toggleWhenPressed(new RunMotor(robot.bucket, 0.25, 10));
+		button8.toggleWhenPressed(new RunMotor(robot.bucket, -0.25, 10));
+		button11.whenPressed(new RunMotor(robot.intake, 0.0));
+		button11.whenPressed(new RunMotor(robot.belt, 0.0));
+		button9.whenPressed(new SetServo(robot.servoL, 0));
+		button9.whenPressed(new SetServo(robot.servoR, 0));
+		button10.whenPressed(new SetServo(robot.servoL, 100));
+		button10.whenPressed(new SetServo(robot.servoR, -100));
 		button12.whenPressed(new ResetGyro());
-		button13.toggleWhenPressed(new RunMotor(Robot.climber, 1.0));
+		button13.toggleWhenPressed(new RunMotor(robot.climber, 1.0));
 	}
 }

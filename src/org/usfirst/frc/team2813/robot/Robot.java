@@ -26,12 +26,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-	public static MotorSubsystem intake, belt, bucket, climber;
-	public static ADXRS450_Gyro gyro;
-	public static DriveTrain driveTrain;
-	public static OI oi; // Operator Interface
-	public static Servo servoL, servoR;
-	public static UsbCamera camera;
+	public MotorSubsystem intake, belt, bucket, climber;
+	public ADXRS450_Gyro gyro;
+	public DriveTrain driveTrain;
+	public OI oi; // Operator Interface
+	public Servo servoL, servoR;
+	public UsbCamera camera;
+	private static Robot instance;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<Command>();
@@ -41,6 +42,7 @@ public class Robot extends IterativeRobot {
 	 * used for any initialization code.
 	 */
 	public void robotInit() {
+		instance=this;
 		// This chooser will be used to select Autonomous Commands
 		// when they're funcitonal enough to actually be run.
 		chooser.addDefault("Sit there and do nothing", null);
@@ -143,5 +145,10 @@ public class Robot extends IterativeRobot {
 	 */
 	public void testPeriodic() {
 		LiveWindow.run();
+	}
+
+	public static Robot getInstance() {
+		// TODO Auto-generated method stub
+		return instance;
 	}
 }

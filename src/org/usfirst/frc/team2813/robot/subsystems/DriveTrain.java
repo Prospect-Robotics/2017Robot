@@ -17,7 +17,6 @@ public class DriveTrain extends Subsystem {
 	public final RobotDrive drive;
 	public final Encoder encoder;
 	private PIDController ctrl;
-	private double pid_P, pid_I, pid_D;
 
 	private enum Mode {
 		CARTESIAN, POLAR;
@@ -36,25 +35,26 @@ public class DriveTrain extends Subsystem {
 	}
 
 	public DriveTrain() {
+		final Robot robot = Robot.getInstance();
 		drive = new RobotDrive(0, 1, 2, 3);
 		encoder = new Encoder(0, 1);
-		Robot.gyro.setPIDSourceType(PIDSourceType.kRate);
-		ctrl = new PIDController(0, 0, 0, Robot.gyro, this::drive);
+		robot.gyro.setPIDSourceType(PIDSourceType.kRate);
+		ctrl = new PIDController(0, 0, 0, robot.gyro, this::drive);
 		ctrl.setOutputRange(-1, 1);
 	}
 
 	public synchronized void drive(double rotation) {
-		if (pid_P != SmartDashboard.getNumber("p", 0.0) || pid_I != SmartDashboard.getNumber("i", 0.0) || pid_D != SmartDashboard.getNumber("d", 0.0)) {
-			pid_P = SmartDashboard.getNumber("p", 0.0);
-			pid_I = SmartDashboard.getNumber("i", 0.0);
-			pid_D = SmartDashboard.getNumber("d", 0.0);
+		final Robot robot = Robot.getInstance();
+		double pid_P = SmartDashboard.getNumber("p", 0.0), pid_I = SmartDashboard.getNumber("i", 0.0),
+				pid_D = SmartDashboard.getNumber("d", 0.0);
+		if (ctrl.getP() != pid_P || ctrl.getI() != pid_I || ctrl.getD() != pid_D) {
 			ctrl.setPID(pid_P, pid_I, pid_D);
 		}
 		switch (mode) {
 		case CARTESIAN:
-			drive.mecanumDrive_Cartesian(x, y, rotation, Robot.gyro.getAngle());
+			drive.mecanumDrive_Cartesian(x, y, rotation, robot.gyro.getAngle());
 		case POLAR:
-			drive.mecanumDrive_Polar(x, y - Robot.gyro.getAngle(), rotation);
+			drive.mecanumDrive_Polar(x, y - robot.gyro.getAngle(), rotation);
 		}
 	}
 

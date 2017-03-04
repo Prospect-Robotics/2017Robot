@@ -9,7 +9,7 @@ public class Rotate extends Command {
 	protected double startDegrees;
 
 	public Rotate(double rotate, double degrees) {
-		requires(Robot.driveTrain);
+		requires(Robot.getInstance().driveTrain);
 		this.rotate = rotate;
 		targetDegrees = degrees;
 		// Use requires() here to declare subsystem dependencies
@@ -18,21 +18,21 @@ public class Rotate extends Command {
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
-		startDegrees = Robot.gyro.getAngle();
+		startDegrees = Robot.getInstance().gyro.getAngle();
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		Robot.driveTrain.mecanumDriveCartesian(0, 0, rotate);
+		Robot.getInstance().driveTrain.mecanumDriveCartesian(0, 0, rotate);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		return Math.abs(Robot.gyro.getAngle() + startDegrees) >= targetDegrees;
+		return Math.abs(Robot.getInstance().gyro.getAngle() + startDegrees) >= targetDegrees;
 	}
 
 	// Called once after isFinished returns true
 	protected void end() {
-		Robot.driveTrain.mecanumDriveCartesian(0, 0, 0);
+		Robot.getInstance().driveTrain.mecanumDriveCartesian(0, 0, 0);
 	}
 }
