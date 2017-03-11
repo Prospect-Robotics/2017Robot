@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class SetServo extends InstantCommand {
-	protected Servo servo;
-	protected double angle;
+	Servo servo;
+	double angle;
 
 	public SetServo(Servo servo, double angle) {
 		super();
@@ -16,7 +16,7 @@ public class SetServo extends InstantCommand {
 		this.angle = angle;
 	}
 
-	protected void initialize() {
+	protected void execute() {
 		servo.setAngle(angle);
 	}
 }

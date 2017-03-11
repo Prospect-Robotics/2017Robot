@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class RunMotor extends Command {
 	MotorSubsystem motor;
-	double speed;
+	double speed, distance;
 
 	public RunMotor(MotorSubsystem motor, double speed) {
 		requires(motor);
@@ -19,12 +19,15 @@ public class RunMotor extends Command {
 		setTimeout(timeout);
 	}
 
+	protected void initialize() {
+	}
+
 	protected void execute() {
 		motor.set(speed);
 	}
 
 	protected boolean isFinished() {
-		return isTimedOut();
+		return false;
 	}
 
 	protected void end() {

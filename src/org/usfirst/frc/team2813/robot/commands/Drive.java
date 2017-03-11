@@ -7,29 +7,31 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class Drive extends Command {
 	double x, y, targetInches;
-	private final DriveTrain robot_driveTrain; // syntactic sugar
-	public Drive(double x, double y, double inches) {
-		robot_driveTrain=Robot.getInstance().driveTrain;
-		requires(robot_driveTrain);
+	private final DriveTrain driveTrain;
+
+	public Drive(double x, double y, double timeout) {
+		driveTrain = Robot.getInstance().driveTrain;
+		requires(driveTrain);
 		this.x = x;
 		this.y = y;
-		this.targetInches = inches;
+		setTimeout(timeout);
 	}
 
 	protected void initialize() {
-		robot_driveTrain.encoder.reset();
+		// driveTrain.encoder.setDistancePerPulse(6 * Math.PI / 360);
 	}
 
 	protected void execute() {
-		robot_driveTrain.mecanumDriveCartesian(x, y, 0);
+		driveTrain.drive.mecanumDrive_Cartesian(x, y, 0, Robot.getInstance().gyro.getAngle());
 	}
 
 	protected boolean isFinished() {
-		return Math.abs(robot_driveTrain.encoder.getDistance()) >= targetInches;
+		// return Math.abs(driveTrain.encoder.getDistance()) >= targetInches;
+		return false;
 	}
 
 	protected void end() {
-		robot_driveTrain.mecanumDriveCartesian(0, 0, 0);
+		driveTrain.mecanumDriveCartesian(0, 0, 0, false);
 	}
 
 	// Called when another command which requires one or more of the same

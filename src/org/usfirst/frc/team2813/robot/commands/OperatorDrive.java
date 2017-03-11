@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class OperatorDrive extends Command {
 
-	double deadZone = 0.275;
-	double scale = 1;
-	int shuffleTicks = 0;
-	int shuffleTickLimit = 3;
+	private double deadZone = 0.0;
+	private double scale = 1;
+	private double scalePOV = 0.15;
+	public boolean fieldOriented = false;
 
 	public OperatorDrive() {
 		// Use requires() here to declare subsystem dependencies
@@ -24,31 +24,28 @@ public class OperatorDrive extends Command {
 	protected void execute() {
 		Robot robot = Robot.getInstance(); // syntactic sugar, just for
 											// readability
+		scale = 0.5 - robot.oi.joystick.getRawAxis(3) / 2;
 		if (!robot.isNewDataAvailable()) {
 			return;
 		}
-		if (Math.IEEEremainder(robot.oi.joystick.getDirectionDegrees() - robot.gyro.getAngle(), 180) > 10) {
-			scale = 1;
-		}
-		double twist = Math.pow(((Math.abs(robot.oi.joystick.getRawAxis(4)) * (1 - deadZone) + deadZone)), 3);
-		if (robot.oi.joystick.getRawAxis(4) < 0) {
+		// if (Math.IEEEremainder(robot.oi.joystick.getDirectionDegrees() -
+		// robot.gyro.getAngle(), 180) > 10) {
+		// scale = 1;
+		// }
+		double twist = Math.pow(Math.abs(robot.oi.joystick.getTwist()), 3) * scale * (1 - deadZone) + deadZone;
+		if (robot.oi.joystick.getTwist() < 0) {
 			twist *= -1;
 		}
-		if (robot.oi.joystick.getPOV() >= 0) {
-			if (shuffleTicks <= shuffleTickLimit) {
-				robot.driveTrain.mecanumDrivePolar(scale, robot.oi.joystick.getPOV() - robot.gyro.getAngle(), twist);
-				shuffleTicks++;
-			}
-		} else {
-			double x = scale * Math.pow(robot.oi.joystick.getX(), 3);
-			double y = scale * Math.pow(robot.oi.joystick.getY(), 3);
-			robot.driveTrain.mecanumDriveCartesian(x, y, twist);
-			shuffleTicks = 0;
-		}
-		// robot.intake.set(robot.oi.joystick.getRawAxis(2) -
-		// robot.oi.joystick.getRawAxis(3));
-		// robot.belt.set((robot.oi.joystick.getRawAxis(3) -
-		// robot.oi.joystick.getRawAxis(2)) * 0.6);
+		 if (robot.oi.joystick.getPOV() >= 0) {
+		 robot.driveTrain.drive.mecanumDrive_Polar(scalePOV, robot.oi.joystick.getPOV(), twist);
+		 } else {
+		double x = scale * Math.pow(robot.oi.joystick.getX(), 3);
+		double y = scale * Math.pow(robot.oi.joystick.getY(), 3);
+		System.out.println(x+"x");
+		System.out.println(y+"y");
+		System.out.println(twist+"z");
+		robot.driveTrain.drive.mecanumDrive_Cartesian(x, y, twist, fieldOriented ? robot.gyro.getAngle() : 0);
+		 }
 	}
 
 	// Make this return true when this Command no longer needs to run execute()

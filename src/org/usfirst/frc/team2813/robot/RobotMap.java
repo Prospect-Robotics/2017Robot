@@ -9,10 +9,12 @@ package org.usfirst.frc.team2813.robot;
 public class RobotMap {
 	public static final int intakePort = 4;
 	public static final int beltPort = 5;
-	public static final int bucketPort = 6;
+	public static final int liftPort = 6;
+	public static final int liftEncoderA = 2;
+	public static final int liftEncoderB = 3;
 	public static final int servoLPort = 7;
-	public static final int climberPort = 8;
 	public static final int servoRPort = 9;
+	public static final int climberPort = 8;
 	// For example to map the left and right motors, you could define the
 	// following variables to use with your drivetrain subsystem.
 	// public static int leftMotor = 1;

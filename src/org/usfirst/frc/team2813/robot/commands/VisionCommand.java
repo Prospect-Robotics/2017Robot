@@ -7,6 +7,7 @@
 //import edu.wpi.cscore.VideoSource;
 //import edu.wpi.first.wpilibj.command.Command;
 //import edu.wpi.first.wpilibj.vision.VisionRunner;
+//import edu.wpi.first.wpilibj.vision.VisionThread;
 //
 //public class VisionCommand extends Command implements VisionRunner.Listener<GripPipeline> {
 //	// threshold for lines that are close together (square radius around
@@ -14,16 +15,20 @@
 //	private static final double THRESHOLD = 10;
 //	private static final double ANGLE_THRESHOLD = 5;
 //
-//	private final VisionRunner<GripPipeline> m_runner;
+//	private final VisionThread m_thread;
 //
 //	public VisionCommand(VideoSource camera) {
-//		m_runner = new VisionRunner<GripPipeline>(camera, new GripPipeline(), this);
+//		m_thread=new VisionThread(camera, new GripPipeline(), this);
 //		// Use requires() here to declare subsystem dependencies
 //		// eg. requires(chassis);
 //	}
 //
+//	VisionCommand(VisionThread thread) {
+//		m_thread = thread;
+//	}
+//
 //	protected void execute() {
-//		m_runner.runOnce();
+//		Thread.yield();
 //	}
 //
 //	protected boolean isFinished() {
@@ -45,33 +50,37 @@
 //	 */
 //
 //	static void addLine(ArrayList<Line> lines, Line line2) {
-//		boolean flag=false;
+//		boolean flag = false;
 //		for (int i = 0; i < lines.size(); i++) {
-//			Line line1=lines.get(i);
+//			Line line1 = lines.get(i);
 //			if (isClose(line1, line2)) {
-//				if(isAngleClose(line1, line2)) {
+//				if (isAngleClose(line1, line2)) {
 //					lines.set(i, new Line(line1.x1, line1.y1, line2.x2, line2.y2));
-//					flag=true;
-//				}
-//				else {
+//					flag = true;
+//				} else {
 //					lines.set(i, new Line(line2.x1, line2.y1, line1.x2, line1.y2));
 //				}
 //			} else if (isClose(line2, line1)) {
-//				if(isAngleClose(line2, line1)) {
+//				if (isAngleClose(line2, line1)) {
 //					lines.set(i, new Line(line2.x1, line2.y1, line1.x2, line1.y2));
-//					flag=true;
-//				}
-//				else {
+//					flag = true;
+//				} else {
 //					lines.set(i, new Line(line1.x1, line1.y1, line2.x2, line2.y2));
 //				}
-//			Line newLine = concatenateLines(lines.get(i), lineToAdd);
-//			if (newLine != null) {
-//				lines.set(i, newLine);
-//				flag=true;
+//				Line newLine = concatenateLines(lines.get(i), line2);
+//				if (newLine != null) {
+//					lines.set(i, newLine);
+//					flag = true;
+//				}
 //			}
-//		}
-//		lines.add(lineToAdd); // nowhere for it to go, might as well put it on
+//			lines.add(line2); // nowhere for it to go, might as well put it on
 //								// the end of the list.
+//		}
+//	}
+//
+//	private static Line concatenateLines(Line line, Line line2) {
+//		// TODO Auto-generated method stub
+//		return null;
 //	}
 //
 //	private static boolean isAngleClose(Line line1, Line line2) {
@@ -95,20 +104,15 @@
 //		 * mini-problem. 4. Main process assembles mini-solutions to solve
 //		 * original problem.
 //		 * 
-//		 * Main process Subprocesses
-//		 * ╔═════════╗     -- Sub solutions are computed by the second function argument
-//		 * ║         ╟──Sub-problem > Sub-Solution ┐
-//		 * ║         ║                             ├───┐ -- These joints are calls to the joiner function 
-//		 * ║         ╟──Sub-problem > Sub-Solution ┘   │  (third argument)
-//		 * ║         ║                                 │  ╔══════════╗
-//		 * ║ Main    ╟──Sub-problem > Sub-Solution ┐   ╞══╣  MAIN    ║
-//		 * ║ Problem ║                             ├─┐ │  ║ SOLUTION ║
-//		 * ║         ╟──Sub-problem > Sub-Solution ┘ │ │  ╚══════════╝
-//		 * ║         ║                               ├─┘
-//		 * ║         ╟──Sub-problem > Sub-Solution ┐ │    
-//		 * ║         ║                             ├─┘   
-//		 * ║         ╟──Sub-problem > Sub-Solution ┘ -- Sub-solutions are combined to solve original problem
-//		 * ╚═════════╝
+//		 * Main process Subprocesses ╔═════════╗ -- Sub solutions are computed
+//		 * by the second function argument ║ ╟──Sub-problem > Sub-Solution ┐ ║ ║
+//		 * ├───┐ -- These joints are calls to the joiner function ║
+//		 * ╟──Sub-problem > Sub-Solution ┘ │ (third argument) ║ ║ │ ╔══════════╗
+//		 * ║ Main ╟──Sub-problem > Sub-Solution ┐ ╞══╣ MAIN ║ ║ Problem ║ ├─┐ │
+//		 * ║ SOLUTION ║ ║ ╟──Sub-problem > Sub-Solution ┘ │ │ ╚══════════╝ ║ ║
+//		 * ├─┘ ║ ╟──Sub-problem > Sub-Solution ┐ │ ║ ║ ├─┘ ║ ╟──Sub-problem >
+//		 * Sub-Solution ┘ -- Sub-solutions are combined to solve original
+//		 * problem ╚═════════╝
 //		 * 
 //		 * collect takes three arguments. The first one creates a new blank
 //		 * sub-solution that the process will fill in. The second one is a thing

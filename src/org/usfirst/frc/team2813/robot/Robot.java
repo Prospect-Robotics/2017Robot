@@ -1,17 +1,14 @@
 package org.usfirst.frc.team2813.robot;
 
-import org.usfirst.frc.team2813.robot.commands.Autonomous;
+import org.usfirst.frc.team2813.robot.commands.BasicAutonomous;
 import org.usfirst.frc.team2813.robot.subsystems.DriveTrain;
+import org.usfirst.frc.team2813.robot.subsystems.Lift;
 import org.usfirst.frc.team2813.robot.subsystems.MotorSubsystem;
 
-import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.VictorSP;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -26,35 +23,36 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-	public MotorSubsystem intake, belt, bucket, climber;
+	public MotorSubsystem intake, belt, climber;
+	public Lift lift;
 	public ADXRS450_Gyro gyro;
 	public DriveTrain driveTrain;
 	public OI oi; // Operator Interface
 	public Servo servoL, servoR;
-	public UsbCamera camera;
+	// public UsbCamera camera;
 	private static Robot instance;
 
-	Command autonomousCommand;
-	SendableChooser<Command> chooser = new SendableChooser<Command>();
+	AutonomousCommandBase autonomousCommand;
+	SendableChooser<AutonomousCommandBase> chooser = new SendableChooser<AutonomousCommandBase>();
 
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	public void robotInit() {
-		instance=this;
+		instance = this;
 		// This chooser will be used to select Autonomous Commands
 		// when they're funcitonal enough to actually be run.
-		chooser.addDefault("Sit there and do nothing", null);
-		chooser.addObject("Also, do nothing", null);
+		chooser.addDefault("Basic autonomous", new BasicAutonomous());
+		chooser.addObject("Just sit there for 15 sec", null);
 		SmartDashboard.putData("Auto mode", chooser);
-		camera = CameraServer.getInstance().startAutomaticCapture();
+		// camera = CameraServer.getInstance().startAutomaticCapture();
 		intake = new MotorSubsystem(VictorSP.class, RobotMap.intakePort, "Intake");
 		belt = new MotorSubsystem(VictorSP.class, RobotMap.beltPort, "Belt");
 		climber = new MotorSubsystem(VictorSP.class, RobotMap.climberPort, "Climber");
 		// Sparks have built-in support for limit switches, so the robot program
 		// doesn't have to be aware of their existence
-		bucket = new MotorSubsystem(Spark.class, RobotMap.bucketPort, "Bucket");
+		lift = new Lift();
 		servoL = new Servo(RobotMap.servoLPort);
 		servoR = new Servo(RobotMap.servoRPort);
 		gyro = new ADXRS450_Gyro(); // Initialize before driveTrain
@@ -100,8 +98,6 @@ public class Robot extends IterativeRobot {
 		// button
 		autonomousCommand = chooser.getSelected();
 
-		new Autonomous();
-
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
 		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -111,6 +107,7 @@ public class Robot extends IterativeRobot {
 
 		// schedule the autonomous command (if one is selected)
 		if (autonomousCommand != null) {
+			autonomousCommand.init();
 			autonomousCommand.start();
 		}
 	}
@@ -148,7 +145,6 @@ public class Robot extends IterativeRobot {
 	}
 
 	public static Robot getInstance() {
-		// TODO Auto-generated method stub
 		return instance;
 	}
 }
